@@ -74,5 +74,12 @@
             <version>[3.0,)</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>net.yetamine</groupId>
+            <artifactId>net.yetamine.sova</artifactId>
+            <!-- Built with snapshot/1.0.0/20160308 -->
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>
