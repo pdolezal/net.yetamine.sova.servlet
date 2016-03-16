@@ -140,6 +140,51 @@ public final class ServletContextSymbol<T> extends ServletAttributeSymbol<T> {
     }
 
     /**
+     * Puts the default to the source if the attribute does not provide an
+     * adaptable value and returns the adaptation of the value then.
+     *
+     * @param source
+     *            the source of the argument to adapt and to store the result.
+     *            It must not be {@code null}.
+     *
+     * @return the result of adaptation, or {@code null} if there is no default
+     */
+    public T let(ServletContext source) {
+        final T current = get(source);
+        if (current != null) {
+            return current;
+        }
+
+        final T result = fallback().get();
+        put(source, result);
+        return result;
+    }
+
+    /**
+     * Puts the default to the source if the attribute is absent, otherwise
+     * tries to use the present attribute to get the result.
+     *
+     * @param source
+     *            the source of the result, which might be possibly updated. It
+     *            must not be {@code null}.
+     *
+     * @return the adaptation of the resulting value; an empty container is
+     *         returned if the value could not adapted, or no default is
+     *         provided
+     */
+    public Optional<T> have(ServletContext source) {
+        final Object current = fetch(source);
+
+        if (current != null) { // If present, try to use it
+            return Optional.ofNullable(derive(current));
+        }
+
+        final Optional<T> result = Optional.ofNullable(fallback().get());
+        result.ifPresent(value -> put(source, value));
+        return result;
+    }
+
+    /**
      * Returns a representation of an adapted value from the source.
      *
      * @param source
