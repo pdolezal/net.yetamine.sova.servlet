@@ -20,8 +20,8 @@ import java.util.Optional;
 
 import javax.servlet.ServletRequest;
 
-import net.yetamine.sova.adaptation.AdaptationResult;
-import net.yetamine.sova.adaptation.Mappable;
+import net.yetamine.sova.AdaptationResult;
+import net.yetamine.sova.Mappable;
 
 /**
  * An interface for retrieving data from {@link ServletRequest} attributes which

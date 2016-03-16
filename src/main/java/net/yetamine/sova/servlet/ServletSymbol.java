@@ -23,9 +23,9 @@ import java.util.Optional;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 
-import net.yetamine.sova.adaptation.AdaptationProvider;
-import net.yetamine.sova.adaptation.AdaptationResult;
-import net.yetamine.sova.adaptation.AdaptationStrategy;
+import net.yetamine.sova.AdaptationProvider;
+import net.yetamine.sova.AdaptationResult;
+import net.yetamine.sova.AdaptationStrategy;
 import net.yetamine.sova.symbols.DelegatingSymbol;
 
 /**

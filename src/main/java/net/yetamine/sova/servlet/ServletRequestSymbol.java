@@ -21,9 +21,9 @@ import java.util.Optional;
 
 import javax.servlet.ServletRequest;
 
-import net.yetamine.sova.adaptation.AdaptationProvider;
-import net.yetamine.sova.adaptation.AdaptationResult;
-import net.yetamine.sova.adaptation.Downcasting;
+import net.yetamine.sova.AdaptationProvider;
+import net.yetamine.sova.AdaptationResult;
+import net.yetamine.sova.Downcasting;
 
 /**
  * A symbol implementation designed specifically for dealing with instances of

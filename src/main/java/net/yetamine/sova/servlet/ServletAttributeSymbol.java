@@ -18,7 +18,7 @@ package net.yetamine.sova.servlet;
 
 import java.util.Objects;
 
-import net.yetamine.sova.adaptation.AdaptationProvider;
+import net.yetamine.sova.AdaptationProvider;
 import net.yetamine.sova.symbols.DelegatingSymbol;
 
 /**
