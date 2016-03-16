@@ -99,7 +99,7 @@ public final class ServletRequestSymbol<T> extends ServletAttributeSymbol<T> imp
      * @see net.yetamine.sova.servlet.ServletRequestValue#get(javax.servlet.ServletRequest)
      */
     public T get(ServletRequest source) {
-        return treat(fetch(source));
+        return derive(fetch(source));
     }
 
     /**
@@ -146,7 +146,7 @@ public final class ServletRequestSymbol<T> extends ServletAttributeSymbol<T> imp
      *            the value to adapt and transfer
      */
     public void set(ServletRequest consumer, Object value) {
-        put(consumer, treat(value));
+        put(consumer, derive(value));
     }
 
     /**

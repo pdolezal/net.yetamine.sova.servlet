@@ -110,7 +110,7 @@ public final class ServletContextSymbol<T> extends ServletAttributeSymbol<T> {
      * @return the result of the adaptation, or {@code null} if not possible
      */
     public T get(ServletContext source) {
-        return treat(fetch(source));
+        return derive(fetch(source));
     }
 
     /**
@@ -175,7 +175,7 @@ public final class ServletContextSymbol<T> extends ServletAttributeSymbol<T> {
      *            the value to adapt and transfer
      */
     public void set(ServletContext consumer, Object value) {
-        put(consumer, treat(value));
+        put(consumer, derive(value));
     }
 
     /**
