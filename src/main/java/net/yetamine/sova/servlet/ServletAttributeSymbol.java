@@ -19,6 +19,8 @@ package net.yetamine.sova.servlet;
 import java.util.Objects;
 
 import net.yetamine.sova.AdaptationProvider;
+import net.yetamine.sova.Mappable;
+import net.yetamine.sova.Substitutable;
 import net.yetamine.sova.symbols.DelegatingSymbol;
 
 /**
@@ -28,10 +30,12 @@ import net.yetamine.sova.symbols.DelegatingSymbol;
  * @param <T>
  *            the type of resulting values
  */
-public abstract class ServletAttributeSymbol<T> extends DelegatingSymbol<T> {
+public abstract class ServletAttributeSymbol<T> extends DelegatingSymbol<T> implements Substitutable<Mappable<String, T>> {
 
     /** Name of the attribute. */
     private final String attribute;
+    /** Cached {@link #substitute()}. */
+    private Mappable<String, T> substitute;
 
     /**
      * Prepares a new instance.
@@ -85,5 +89,22 @@ public abstract class ServletAttributeSymbol<T> extends DelegatingSymbol<T> {
      */
     public final String attribute() {
         return attribute;
+    }
+
+    /**
+     * @see net.yetamine.sova.symbols.PublicSymbol#substitute()
+     */
+    public final Mappable<String, T> substitute() {
+        // Using caching technique that uses out-of-thin air thread safety;
+        // this technique is alright here, because the instances are always
+        // behaving in the same way, therefore they are interchangeable
+        Mappable<String, T> result = substitute;
+        if (result != null) {
+            return result;
+        }
+
+        result = Mappable.of(attribute, this);
+        substitute = result;
+        return result;
     }
 }

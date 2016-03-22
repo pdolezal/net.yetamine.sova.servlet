@@ -166,11 +166,7 @@ public final class ServletSymbol<T> extends DelegatingSymbol<T> implements Servl
      */
     public Optional<T> find(ServletRequest source) {
         final T result = requestSymbol.get(source);
-        if (result != null) {
-            return Optional.of(result);
-        }
-
-        return contextSymbol.find(source.getServletContext());
+        return (result != null) ? Optional.of(result) : contextSymbol.find(source.getServletContext());
     }
 
     /**
