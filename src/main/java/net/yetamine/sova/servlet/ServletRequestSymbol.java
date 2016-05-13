@@ -18,6 +18,7 @@ package net.yetamine.sova.servlet;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import javax.servlet.ServletRequest;
 
@@ -86,34 +87,141 @@ public final class ServletRequestSymbol<T> extends ServletAttributeSymbol<T> imp
         return attribute().hashCode();
     }
 
+    // Mappable-like methods
+
     /**
-     * @see net.yetamine.sova.servlet.ServletRequestValue#fetch(javax.servlet.ServletRequest)
+     * @see net.yetamine.sova.servlet.ServletRequestValue#pull(javax.servlet.ServletRequest)
      */
-    public Object fetch(ServletRequest source) {
+    public Object pull(ServletRequest source) {
         return source.getAttribute(attribute());
     }
 
-    // Mappable-like methods
+    /**
+     * Transfers the given value to the given consumer.
+     *
+     * @param consumer
+     *            the consumer to accept the {@link #remap()} result and the
+     *            given value. It must not be {@code null}.
+     * @param value
+     *            the value to transfer
+     */
+    public void push(ServletRequest consumer, T value) {
+        consumer.setAttribute(attribute(), value);
+    }
 
     /**
      * @see net.yetamine.sova.servlet.ServletRequestValue#get(javax.servlet.ServletRequest)
      */
     public T get(ServletRequest source) {
-        return derive(fetch(source));
+        return nullable(pull(source));
     }
 
     /**
      * @see net.yetamine.sova.servlet.ServletRequestValue#use(javax.servlet.ServletRequest)
      */
     public T use(ServletRequest source) {
-        return recover(fetch(source));
+        return surrogate(pull(source));
     }
 
     /**
      * @see net.yetamine.sova.servlet.ServletRequestValue#find(javax.servlet.ServletRequest)
      */
     public Optional<T> find(ServletRequest source) {
-        return resolve(fetch(source));
+        return optional(pull(source));
+    }
+
+    /**
+     * @see net.yetamine.sova.servlet.ServletRequestValue#yield(javax.servlet.ServletRequest)
+     */
+    public AdaptationResult<T> yield(ServletRequest source) {
+        return adapt(pull(source));
+    }
+
+    /**
+     * Puts the adapted value to the given map.
+     *
+     * @param consumer
+     *            the map to accept the {@link #remap()} result and the adapted
+     *            value. It must not be {@code null}.
+     * @param value
+     *            the value to adapt and transfer
+     */
+    public void put(ServletRequest consumer, Object value) {
+        push(consumer, nullable(value));
+    }
+
+    /**
+     * Puts the specified value to the given map, or removes the existing value
+     * from the map if the specified value could not be adapted to a valid
+     * object.
+     *
+     * @param consumer
+     *            the map to accept the {@link #remap()} result and the adapted
+     *            value. It must not be {@code null}.
+     * @param value
+     *            the value to adapt and transfer
+     *
+     * @return the adaptation of the specified value
+     */
+    public T set(ServletRequest consumer, Object value) {
+        final T result = nullable(value);
+
+        if (result == null) { // Null or non-adaptable
+            consumer.removeAttribute(attribute());
+            return null;
+        }
+
+        push(consumer, result);
+        return result;
+    }
+
+    /**
+     * Transfers the adapted value to the given consumer if the value could be
+     * adapted to a valid object.
+     *
+     * @param consumer
+     *            the consumer to accept the {@link #remap()} result and the
+     *            adapted value. It must not be {@code null}.
+     * @param value
+     *            the value to adapt and transfer
+     *
+     * @return the result of the adaptation
+     */
+    public Optional<T> let(ServletRequest consumer, Object value) {
+        final Optional<T> result = optional(value);
+        result.ifPresent(v -> push(consumer, v));
+        return result;
+    }
+
+    /**
+     * Returns a value from the source if the source can supply a valid result,
+     * otherwise fixes the source with a surrogate value and returns it instead.
+     * The returned value should be then present in the source in either case.
+     *
+     * @param source
+     *            the source to provide or accept the value. It must not be
+     *            {@code null}.
+     * @param surrogate
+     *            the surrogate supplier. It must not be {@code null}.
+     *
+     * @return the original or surrogate value, which the source contains now;
+     *         {@code null} may be returned if the surrogate does not pass the
+     *         adaptation
+     */
+    public T supply(ServletRequest source, Supplier<? extends T> surrogate) {
+        final T current = get(source);
+        if (current != null) {
+            return current;
+        }
+
+        final T result = nullable(surrogate.get());
+        if (result == null) { // Null or non-adaptable
+            source.removeAttribute(attribute());
+            return null;
+        }
+
+        push(source, result);
+        return result;
     }
 
     /**
@@ -124,17 +232,11 @@ public final class ServletRequestSymbol<T> extends ServletAttributeSymbol<T> imp
      *            the source of the argument to adapt and to store the result.
      *            It must not be {@code null}.
      *
-     * @return the result of adaptation, or {@code null} if there is no default
+     * @return the result of adaptation, or the default; {@code null} may be
+     *         returned if the fallback does not return anything better
      */
-    public T let(ServletRequest source) {
-        final T current = get(source);
-        if (current != null) {
-            return current;
-        }
-
-        final T result = fallback().get();
-        put(source, result);
-        return result;
+    public T supply(ServletRequest source) {
+        return supply(source, fallback());
     }
 
     /**
@@ -150,48 +252,15 @@ public final class ServletRequestSymbol<T> extends ServletAttributeSymbol<T> imp
      *         provided
      */
     public Optional<T> have(ServletRequest source) {
-        final Object current = fetch(source);
+        final Object current = pull(source);
 
         if (current != null) { // If present, try to use it
-            return Optional.ofNullable(derive(current));
+            return optional(current);
         }
 
         final Optional<T> result = Optional.ofNullable(fallback().get());
-        result.ifPresent(value -> put(source, value));
+        result.ifPresent(value -> push(source, value));
         return result;
-    }
-
-    /**
-     * @see net.yetamine.sova.servlet.ServletRequestValue#yield(javax.servlet.ServletRequest)
-     */
-    public AdaptationResult<T> yield(ServletRequest source) {
-        return adapt(fetch(source));
-    }
-
-    /**
-     * Transfers the given value to the given consumer.
-     *
-     * @param consumer
-     *            the consumer to accept the {@link #remap()} result and the
-     *            given value. It must not be {@code null}.
-     * @param value
-     *            the value to transfer
-     */
-    public void put(ServletRequest consumer, T value) {
-        consumer.setAttribute(attribute(), value);
-    }
-
-    /**
-     * Transfers the adapted value to the given consumer.
-     *
-     * @param consumer
-     *            the consumer to accept the {@link #remap()} result and the
-     *            adapted value. It must not be {@code null}.
-     * @param value
-     *            the value to adapt and transfer
-     */
-    public void set(ServletRequest consumer, Object value) {
-        put(consumer, derive(value));
     }
 
     /**

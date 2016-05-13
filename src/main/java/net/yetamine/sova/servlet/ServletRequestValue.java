@@ -41,9 +41,7 @@ public interface ServletRequestValue<T> {
      *
      * @return the attribute value from the request without any adaptation
      */
-    Object fetch(ServletRequest source);
-
-    // Mappable-like methods
+    Object pull(ServletRequest source);
 
     /**
      * Returns an adapted value from the source.

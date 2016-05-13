@@ -129,21 +129,21 @@ public final class ServletSymbol<T> extends DelegatingSymbol<T> implements Servl
         return requestSymbol;
     }
 
-    /**
-     * @see net.yetamine.sova.servlet.ServletRequestValue#fetch(javax.servlet.ServletRequest)
-     */
-    public Object fetch(ServletRequest source) {
-        final Object result = requestSymbol.fetch(source);
-        return (result != null) ? result : contextSymbol.fetch(source.getServletContext());
-    }
-
     /* Implementation note:
      *
      * Following methods can't use the usual pattern of just invoking a mappable
-     * method like 'return apply(fetch(source))' (for get) because the request
+     * method like 'return nullable(fetch(source))' for get, because the request
      * might return a non-null value that could not be adapted, resulting in a
      * premature fallback.
      */
+
+    /**
+     * @see net.yetamine.sova.servlet.ServletRequestValue#pull(javax.servlet.ServletRequest)
+     */
+    public Object pull(ServletRequest source) {
+        final Object result = requestSymbol.pull(source);
+        return (result != null) ? result : contextSymbol.pull(source.getServletContext());
+    }
 
     /**
      * @see net.yetamine.sova.servlet.ServletRequestValue#get(javax.servlet.ServletRequest)
