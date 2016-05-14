@@ -1,6 +1,6 @@
 # net.yetamine.sova.servlet #
 
-This repository provides an extension of [net.yetamine.sova](http://github.com/pdolezal/net.yetamine.sova) library for Java Servlet API. Define attributes of your requests and context parameters in a typesafe way!
+This repository provides an extension of [net.yetamine.sova](http://github.com/pdolezal/net.yetamine.sova) library for Java Servlet API. Define attributes of your requests and context parameters in a type-safe way!
 
 
 ## Examples ##
