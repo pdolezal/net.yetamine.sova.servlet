@@ -136,7 +136,7 @@ public final class ServletContextSymbol<T> extends ServletAttributeSymbol<T> {
      *
      * @return the result of the adaptation, or the default
      */
-    public T use(ServletContext source) {
+    public T give(ServletContext source) {
         return surrogate(pull(source));
     }
 
@@ -189,19 +189,16 @@ public final class ServletContextSymbol<T> extends ServletAttributeSymbol<T> {
      *            value. It must not be {@code null}.
      * @param value
      *            the value to adapt and transfer
-     *
-     * @return the adaptation of the specified value
      */
-    public T set(ServletContext consumer, Object value) {
+    public void let(ServletContext consumer, Object value) {
         final T result = nullable(value);
 
         if (result == null) { // Null or non-adaptable
             consumer.removeAttribute(attribute());
-            return null;
+            return;
         }
 
         push(consumer, result);
-        return result;
     }
 
     /**
@@ -216,7 +213,7 @@ public final class ServletContextSymbol<T> extends ServletAttributeSymbol<T> {
      *
      * @return the result of the adaptation
      */
-    public Optional<T> let(ServletContext consumer, Object value) {
+    public Optional<T> have(ServletContext consumer, Object value) {
         final Optional<T> result = optional(value);
         result.ifPresent(v -> push(consumer, v));
         return result;

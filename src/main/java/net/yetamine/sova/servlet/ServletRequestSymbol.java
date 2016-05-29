@@ -117,9 +117,9 @@ public final class ServletRequestSymbol<T> extends ServletAttributeSymbol<T> imp
     }
 
     /**
-     * @see net.yetamine.sova.servlet.ServletRequestValue#use(javax.servlet.ServletRequest)
+     * @see net.yetamine.sova.servlet.ServletRequestValue#give(javax.servlet.ServletRequest)
      */
-    public T use(ServletRequest source) {
+    public T give(ServletRequest source) {
         return surrogate(pull(source));
     }
 
@@ -160,19 +160,16 @@ public final class ServletRequestSymbol<T> extends ServletAttributeSymbol<T> imp
      *            value. It must not be {@code null}.
      * @param value
      *            the value to adapt and transfer
-     *
-     * @return the adaptation of the specified value
      */
-    public T set(ServletRequest consumer, Object value) {
+    public void let(ServletRequest consumer, Object value) {
         final T result = nullable(value);
 
         if (result == null) { // Null or non-adaptable
             consumer.removeAttribute(attribute());
-            return null;
+            return;
         }
 
         push(consumer, result);
-        return result;
     }
 
     /**
@@ -187,7 +184,7 @@ public final class ServletRequestSymbol<T> extends ServletAttributeSymbol<T> imp
      *
      * @return the result of the adaptation
      */
-    public Optional<T> let(ServletRequest consumer, Object value) {
+    public Optional<T> have(ServletRequest consumer, Object value) {
         final Optional<T> result = optional(value);
         result.ifPresent(v -> push(consumer, v));
         return result;

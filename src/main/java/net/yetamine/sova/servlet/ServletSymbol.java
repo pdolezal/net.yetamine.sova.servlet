@@ -154,11 +154,11 @@ public final class ServletSymbol<T> extends DelegatingSymbol<T> implements Servl
     }
 
     /**
-     * @see net.yetamine.sova.servlet.ServletRequestValue#use(javax.servlet.ServletRequest)
+     * @see net.yetamine.sova.servlet.ServletRequestValue#give(javax.servlet.ServletRequest)
      */
-    public T use(ServletRequest source) {
+    public T give(ServletRequest source) {
         final T result = requestSymbol.get(source);
-        return (result != null) ? result : contextSymbol.use(source.getServletContext());
+        return (result != null) ? result : contextSymbol.give(source.getServletContext());
     }
 
     /**

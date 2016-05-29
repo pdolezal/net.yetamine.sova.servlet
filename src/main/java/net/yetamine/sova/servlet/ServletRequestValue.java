@@ -63,7 +63,7 @@ public interface ServletRequestValue<T> {
      *
      * @return the result of the adaptation, or the default
      */
-    T use(ServletRequest source);
+    T give(ServletRequest source);
 
     /**
      * Returns an adapted value from the source as an {@link Optional}.
