@@ -19,6 +19,7 @@ package net.yetamine.sova.servlet;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.EventListener;
 import java.util.HashMap;
@@ -53,6 +54,19 @@ final class MockServletContext implements ServletContext {
         // Default constructor
     }
 
+    /**
+     * Creates a new instance.
+     *
+     * @param source
+     *            the source of the attributes. It must not be {@code null}.
+     */
+    public MockServletContext(ServletContext source) {
+        for (Enumeration<String> names = source.getAttributeNames(); names.hasMoreElements();) {
+            final String name = names.nextElement();
+            attributes.put(name, source.getAttribute(name));
+        }
+    }
+
     // Methods needed by the implementation
 
     /**
@@ -77,14 +91,14 @@ final class MockServletContext implements ServletContext {
         attributes.remove(name);
     }
 
-    // Methods not important for the tests
-
     /**
      * @see javax.servlet.ServletContext#getAttributeNames()
      */
     public Enumeration<String> getAttributeNames() {
-        throw new UnsupportedOperationException();
+        return Collections.enumeration(attributes.keySet());
     }
+
+    // Methods not important for the tests
 
     /**
      * @see javax.servlet.ServletContext#getContextPath()

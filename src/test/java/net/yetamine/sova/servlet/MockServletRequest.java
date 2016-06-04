@@ -19,6 +19,7 @@ package net.yetamine.sova.servlet;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -39,12 +40,40 @@ final class MockServletRequest implements ServletRequest {
 
     /** Attribute holder. */
     private final Map<String, Object> attributes = new HashMap<>();
+    /** Related servlet context. */
+    private ServletContext servletContext;
 
     /**
      * Creates a new instance.
      */
     public MockServletRequest() {
         // Default constructor
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param source
+     *            the source of the attributes. It must not be {@code null}.
+     */
+    public MockServletRequest(ServletRequest source) {
+        for (Enumeration<String> names = source.getAttributeNames(); names.hasMoreElements();) {
+            final String name = names.nextElement();
+            attributes.put(name, source.getAttribute(name));
+        }
+    }
+
+    /**
+     * Sets the servlet context.
+     *
+     * @param value
+     *            the servlet context to set
+     *
+     * @return this instance
+     */
+    public MockServletRequest setServletContext(ServletContext value) {
+        servletContext = value;
+        return this;
     }
 
     // Methods needed by the implementation
@@ -71,14 +100,21 @@ final class MockServletRequest implements ServletRequest {
         attributes.remove(name);
     }
 
-    // Methods not important for the tests
-
     /**
      * @see javax.servlet.ServletRequest#getAttributeNames()
      */
     public Enumeration<String> getAttributeNames() {
-        throw new UnsupportedOperationException();
+        return Collections.enumeration(attributes.keySet());
     }
+
+    /**
+     * @see javax.servlet.ServletRequest#getServletContext()
+     */
+    public ServletContext getServletContext() {
+        return servletContext;
+    }
+
+    // Methods not important for the tests
 
     /**
      * @see javax.servlet.ServletRequest#getCharacterEncoding()
@@ -261,13 +297,6 @@ final class MockServletRequest implements ServletRequest {
      * @see javax.servlet.ServletRequest#getLocalPort()
      */
     public int getLocalPort() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @see javax.servlet.ServletRequest#getServletContext()
-     */
-    public ServletContext getServletContext() {
         throw new UnsupportedOperationException();
     }
 
