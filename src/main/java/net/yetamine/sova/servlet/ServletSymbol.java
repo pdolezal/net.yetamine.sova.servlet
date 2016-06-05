@@ -173,12 +173,17 @@ public final class ServletSymbol<T> extends DelegatingSymbol<T> implements Servl
      * @see net.yetamine.sova.servlet.ServletRequestValue#yield(javax.servlet.ServletRequest)
      */
     public AdaptationResult<T> yield(ServletRequest source) {
-        final AdaptationResult<T> result = requestSymbol.yield(source);
-        if (result.isPresent()) {
-            return result;
+        final AdaptationResult<T> result1 = requestSymbol.yield(source);
+        if (result1.isPresent()) {
+            return result1;
         }
 
-        return contextSymbol.yield(source.getServletContext());
+        final AdaptationResult<T> result2 = contextSymbol.yield(source.getServletContext());
+        if (result2.isPresent()) {
+            return result2;
+        }
+
+        return (result1.argument() != null) ? result1 : result2;
     }
 
     /**
