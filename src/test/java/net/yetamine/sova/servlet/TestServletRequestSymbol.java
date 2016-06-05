@@ -33,10 +33,15 @@ import net.yetamine.sova.Downcasting;
  */
 public final class TestServletRequestSymbol {
 
-    // Testing values
+    /** Value to be present under the key {@code "integer"}. */
     private static final Integer INTEGER_VALUE = Integer.valueOf(1024);
+    /** Value to be present under the key {@code "string"}. */
     private static final String STRING_VALUE = "hello";
 
+    /**
+     * Testing attribute source with both {@link #INTEGER_VALUE} and
+     * {@link #STRING_VALUE}.
+     */
     private static final ServletRequest DATA;
     static {
         DATA = new MockServletRequest();

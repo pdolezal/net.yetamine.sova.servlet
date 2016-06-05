@@ -31,11 +31,18 @@ import net.yetamine.sova.Downcasting;
  */
 public final class TestServletSymbol {
 
-    // Testing values
+    /** Value to be present under the key {@code "integer"}. */
     private static final Integer INTEGER_VALUE = Integer.valueOf(1024);
+    /** Value to be present under the key {@code "string"}. */
     private static final String STRING_VALUE = "hello";
+    /** Value to be present under the key {@code "mock"}. */
     private static final MockObject MOCK_VALUE = new MockObject("mock");
 
+    /**
+     * Testing attribute source with {@link #INTEGER_VALUE} and
+     * {@link #STRING_VALUE} as request attributes and {@link #MOCK_VALUE} as a
+     * context attribute.
+     */
     private static final ServletRequest DATA;
     static {
         final ServletContext context = new MockServletContext();
@@ -117,6 +124,7 @@ public final class TestServletSymbol {
         Assert.assertEquals(r1.fallback().get(), i);
 
         final AdaptationResult<Integer> r2 = new ServletSymbol<>("string", p).yield(DATA);
+        Assert.assertEquals(r2.argument(), STRING_VALUE);
         Assert.assertNull(r2.get());
         Assert.assertEquals(r2.fallback().get(), i);
 
