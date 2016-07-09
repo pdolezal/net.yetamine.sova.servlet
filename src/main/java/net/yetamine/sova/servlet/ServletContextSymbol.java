@@ -290,11 +290,11 @@ public final class ServletContextSymbol<T> extends ServletAttributeSymbol<T> {
     }
 
     /**
-     * @see net.yetamine.sova.symbols.AbstractSymbol#introspect(java.util.Map)
+     * @see net.yetamine.sova.symbols.ExpansiveSymbol#introspect(java.util.Map)
      */
     @Override
     protected void introspect(Map<Object, Object> result) {
         super.introspect(result);
-        result.put(toString("attribute@context"), attribute());
+        result.put("attribute@context", attribute());
     }
 }

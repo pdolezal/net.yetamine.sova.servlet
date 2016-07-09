@@ -187,12 +187,12 @@ public final class ServletSymbol<T> extends DelegatingSymbol<T> implements Servl
     }
 
     /**
-     * @see net.yetamine.sova.symbols.AbstractSymbol#introspect(java.util.Map)
+     * @see net.yetamine.sova.symbols.ExpansiveSymbol#introspect(java.util.Map)
      */
     @Override
     protected void introspect(Map<Object, Object> result) {
         super.introspect(result);
-        result.put(toString("attribute@request"), requestSymbol.attribute());
-        result.put(toString("attribute@context"), contextSymbol.attribute());
+        result.put("attribute@request", requestSymbol.attribute());
+        result.put("attribute@context", contextSymbol.attribute());
     }
 }

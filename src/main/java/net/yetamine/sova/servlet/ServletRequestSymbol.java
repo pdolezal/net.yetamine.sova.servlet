@@ -261,11 +261,11 @@ public final class ServletRequestSymbol<T> extends ServletAttributeSymbol<T> imp
     }
 
     /**
-     * @see net.yetamine.sova.symbols.AbstractSymbol#introspect(java.util.Map)
+     * @see net.yetamine.sova.symbols.ExpansiveSymbol#introspect(java.util.Map)
      */
     @Override
     protected void introspect(Map<Object, Object> result) {
         super.introspect(result);
-        result.put(toString("attribute@request"), attribute());
+        result.put("attribute@request", attribute());
     }
 }
